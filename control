@@ -1,0 +1,10 @@
+Package: com.creaturecoding.csweather
+Name: CSWeather
+Depends: 
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: a simple framework for fetching weather information
+Maintainer: CreatureSurvive <support@creaturecoding.com>
+Author: CreatureSurvive <support@creaturecoding.com>
+Section: System
+Tag: role::developer
