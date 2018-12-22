@@ -47,6 +47,7 @@
 @property (nonatomic, readonly) City *localWeatherCity;
 + (WeatherPreferences *)sharedPreferences;
 - (NSArray<City *> *)loadSavedCities;
+- (NSArray<City *> *)_defaultCities;
 - (BOOL)isCelsius;
 @end
 

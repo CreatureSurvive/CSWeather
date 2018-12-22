@@ -18,6 +18,14 @@ typedef void (^CSWUpdateHandler)(CSWeatherStore *);
 @property (nonatomic, assign) NSInteger autoUpdateInterval;
 
 //
+// index of the saved city to load
+// index range should be the index of a saved city in the weather app
+// if the index is larger than the total number of saved cities, it will fallback to 0
+// first saved city is index 0
+// defaults to 0
+@property (nonatomic, assign) NSInteger savedCityIndex;
+
+//
 // current city name
 //
 @property (nonatomic, retain, readonly) NSString *currentCityName;
@@ -85,7 +93,8 @@ typedef void (^CSWUpdateHandler)(CSWeatherStore *);
 
 // same as initForLocalWeather:(BOOL)local updateHandler:(CSWUpdateHandler)handler with auto update
 // updates the instance data every autoUpdateInterval(minutes) and triggers the updateHandler on condition
-- (instancetype)initForLocalWeather:(BOOL)local autoUpdateInterval:(NSInteger)interval updateHandler:(CSWUpdateHandler)handler;
+// loads the saved city ath the savedCityIndex. defaults to 0
+- (instancetype)initForLocalWeather:(BOOL)local autoUpdateInterval:(NSInteger)interval savedCityIndex:(NSInteger)index updateHandler:(CSWUpdateHandler)handler;
 
 //
 // key value
@@ -105,6 +114,6 @@ typedef void (^CSWUpdateHandler)(CSWeatherStore *);
 //
 // conveinience type method for initForLocalWeather:(BOOL)local autoUpdateInterval:(NSInteger)interval updateHandler:(CSWUpdateHandler)handler
 //
-+ (CSWeatherStore *)weatherStoreForLocalWeather:(BOOL)local autoUpdateInterval:(NSInteger)interval updateHandler:(CSWUpdateHandler)handler;
++ (CSWeatherStore *)weatherStoreForLocalWeather:(BOOL)local autoUpdateInterval:(NSInteger)interval savedCityIndex:(NSInteger)index updateHandler:(CSWUpdateHandler)handler;
 
 @end

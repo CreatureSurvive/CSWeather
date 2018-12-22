@@ -40,8 +40,8 @@ typedef NSUInteger ConditionImageType;
 	return store;
 }
 
-+ (CSWeatherStore *)weatherStoreForLocalWeather:(BOOL)local autoUpdateInterval:(NSInteger)interval updateHandler:(CSWUpdateHandler)handler {
-	CSWeatherStore *store = [[CSWeatherStore alloc] initForLocalWeather:local autoUpdateInterval:interval updateHandler:handler];
++ (CSWeatherStore *)weatherStoreForLocalWeather:(BOOL)local autoUpdateInterval:(NSInteger)interval savedCityIndex:(NSInteger)index updateHandler:(CSWUpdateHandler)handler {
+	CSWeatherStore *store = [[CSWeatherStore alloc] initForLocalWeather:local autoUpdateInterval:interval savedCityIndex:index updateHandler:handler];
 	return store;
 }
 
@@ -60,6 +60,8 @@ typedef NSUInteger ConditionImageType;
 		_isLocalWeather = local;
 		self.handler = nil;
 		self.autoUpdateInterval = -1;
+		self.savedCityIndex = 0;
+		
 		[self load];
 		
 		if ([self isExpired]) {
@@ -75,6 +77,7 @@ typedef NSUInteger ConditionImageType;
 		_isLocalWeather = local;
 		self.handler = handler;
 		self.autoUpdateInterval = -1;
+		self.savedCityIndex = 0;
 		
 		[self load];
 		
@@ -86,11 +89,12 @@ typedef NSUInteger ConditionImageType;
 	return self;
 }
 
-- (instancetype)initForLocalWeather:(BOOL)local autoUpdateInterval:(NSInteger)interval updateHandler:(CSWUpdateHandler)handler {
+- (instancetype)initForLocalWeather:(BOOL)local autoUpdateInterval:(NSInteger)interval savedCityIndex:(NSInteger)index updateHandler:(CSWUpdateHandler)handler {
 	if ((self = [super init])) {
 		_isLocalWeather = local;
 		self.handler = handler;
 		self.autoUpdateInterval = interval;
+		self.savedCityIndex = index;
 		
 		[self load];
 		
@@ -242,6 +246,11 @@ typedef NSUInteger ConditionImageType;
 	}
 }
 
+- (void)setSavedCityIndex:(NSInteger)index {
+	if (_savedCityIndex != index)
+		_savedCityIndex = [[self weatherPreferences] loadSavedCities].count >= index ? index : 0;
+}
+
 #pragma mark update
 
 - (void)update {
@@ -316,7 +325,7 @@ typedef NSUInteger ConditionImageType;
 	
 	void (^local)() = ^ {currentCity = [self weatherPreferences].isLocalWeatherEnabled ? [self weatherPreferences].localWeatherCity : nil; };
 	void (^location)() = ^{ currentCity = [self todayModel].forecastModel.city; };
-	void (^saved)() = ^{ currentCity = [[self weatherPreferences] loadSavedCities][0] ? : [[self weatherPreferences] loadSavedCities][1]; };
+	void (^saved)() = ^{NSArray <City *> *cities = [[self weatherPreferences] loadSavedCities]; currentCity =  cities.count ? cities.count >= self.savedCityIndex ? cities[self.savedCityIndex] : cities[0] : [[self weatherPreferences] _defaultCities][0]; };
 	
 	[self isLocalWeather] ? [self locationServicesEnabled] ? location() : local() : saved();
 	
