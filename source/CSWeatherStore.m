@@ -144,7 +144,17 @@ typedef NSUInteger ConditionImageType;
 }
 
 - (BOOL)load {
-	_metadata = (NSMutableDictionary *)[NSKeyedUnarchiver unarchiveObjectWithFile:[self coderPath]];	
+	NSData *archive;
+	
+	@try {
+		archive = [NSKeyedUnarchiver unarchiveObjectWithFile:[self coderPath]];
+		_metadata = [archive isKindOfClass:NSDictionary.class] ? (NSMutableDictionary *)archive : nil;
+	} 
+	
+	@catch (NSException *exception) {
+		_metadata = nil;
+	}
+	
 	return _metadata != nil;
 }
 
